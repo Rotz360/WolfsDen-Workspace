@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dow Jones Bar - Drink Exchange</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;700&family=Roboto+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="app-container">
+        <header>
+            <div class="logo-area">
+                <h1>DOW JONES BAR</h1>
+                <span class="subtitle">THE DRINK STOCK MARKET</span>
+            </div>
+            <div class="market-status">
+                <span id="market-state">MARKET OPEN</span>
+                <span id="next-crash-timer">CRASH IN: 00:00</span>
+            </div>
+        </header>
+
+        <div class="ticker-wrap">
+            <div class="ticker" id="ticker-content">
+                <!-- Ticker items will be injected here -->
+            </div>
+        </div>
+
+        <main>
+            <div class="drinks-grid" id="drinks-grid">
+                <!-- Drink cards will be injected here -->
+            </div>
+        </main>
+
+        <div class="ticker-wrap bottom">
+            <div class="ticker" id="ticker-content-bottom">
+                <!-- Ticker items will be injected here -->
+            </div>
+        </div>
+
+        <div id="crash-modal" class="crash-modal hidden">
+            <div class="crash-content">
+                <h2>MARKET CRASH!</h2>
+                <p>PRICES PLUMMETING!</p>
+                <div class="crash-timer">ENDS IN: <span id="crash-countdown">00:00</span></div>
+            </div>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+
+</html>

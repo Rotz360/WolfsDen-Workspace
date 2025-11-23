@@ -1,0 +1,334 @@
+:root {
+    --bg-color: #0a0a0a;
+    --card-bg: #1a1a1a;
+    --text-color: #e0e0e0;
+    --accent-green: #00ff41;
+    --accent-red: #ff3b30;
+    --header-bg: #111;
+    --font-main: 'Chakra Petch', sans-serif;
+    --font-mono: 'Roboto Mono', monospace;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: var(--font-main);
+    overflow-x: hidden;
+}
+
+.app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+header {
+    background-color: var(--header-bg);
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #333;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+.logo-area h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    background: linear-gradient(45deg, #fff, #aaa);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+    font-size: 0.9rem;
+    color: #888;
+    letter-spacing: 4px;
+}
+
+.market-status {
+    text-align: right;
+    font-family: var(--font-mono);
+}
+
+#market-state {
+    display: block;
+    font-size: 1.2rem;
+    color: var(--accent-green);
+    font-weight: bold;
+}
+
+#next-crash-timer {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+/* Ticker */
+.ticker-wrap {
+    width: 100%;
+    background-color: #000;
+    overflow: hidden;
+    font-size: 1.1rem;
+    position: relative;
+    height: 40px;
+    display: flex;
+    align-items: center;
+}
+
+.ticker {
+    display: inline-block;
+    white-space: nowrap;
+    animation: ticker 60s linear infinite;
+    padding-left: 100%;
+    /* Start off-screen */
+}
+
+.ticker-item {
+    display: inline-block;
+    padding: 0 2rem;
+    font-family: var(--font-mono);
+}
+
+.ticker-item .price {
+    margin-left: 0.5rem;
+}
+
+.ticker-item.up {
+    color: var(--accent-green);
+}
+
+.ticker-item.down {
+    color: var(--accent-red);
+}
+
+@keyframes ticker {
+    0% {
+        transform: translate3d(0, 0, 0);
+    }
+
+    100% {
+        transform: translate3d(-100%, 0, 0);
+    }
+}
+
+@keyframes ticker-reverse {
+    0% {
+        transform: translate3d(-100%, 0, 0);
+    }
+
+    100% {
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+.ticker-wrap.bottom {
+    border-top: 1px solid #333;
+    border-bottom: none;
+    margin-top: auto;
+}
+
+.ticker-wrap.bottom .ticker {
+    animation-name: ticker-reverse;
+}
+
+/* Grid */
+main {
+    flex: 1;
+    padding: 1rem;
+    overflow-y: auto;
+}
+
+.drinks-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    /* Increased from 180px */
+    gap: 1rem;
+    /* Increased gap */
+}
+
+.drink-card {
+    background-color: var(--card-bg);
+    border: 1px solid #333;
+    border-radius: 6px;
+    padding: 1rem;
+    /* Increased padding */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+    /* overflow: hidden; Removed to let badge show */
+}
+
+.drink-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    border-color: #555;
+}
+
+.drink-name {
+    font-size: 1.2rem;
+    /* Slightly larger */
+    font-weight: bold;
+    margin-bottom: 0.3rem;
+}
+
+.drink-type {
+    font-size: 0.75rem;
+    color: #666;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+}
+
+.price-area {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.current-price {
+    font-size: 1.6rem;
+    /* Slightly larger */
+    font-family: var(--font-mono);
+    font-weight: bold;
+}
+
+.price-change {
+    font-size: 0.95rem;
+    /* Slightly larger */
+    font-family: var(--font-mono);
+}
+
+.trend-arrow {
+    margin-right: 0.2rem;
+}
+
+/* Animations */
+.flash-green {
+    animation: flashGreen 0.5s ease;
+}
+
+.flash-red {
+    animation: flashRed 0.5s ease;
+}
+
+@keyframes flashGreen {
+    0% {
+        background-color: rgba(0, 255, 65, 0.2);
+    }
+
+    100% {
+        background-color: var(--card-bg);
+    }
+}
+
+@keyframes flashRed {
+    0% {
+        background-color: rgba(255, 59, 48, 0.2);
+    }
+
+    100% {
+        background-color: var(--card-bg);
+    }
+}
+
+/* Crash Modal (Removed, but keeping class for safety if JS references it, though we use inline highlight now) */
+.crash-modal {
+    display: none;
+}
+
+/* Crashing Drink Highlight */
+.drink-card.crashing {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1.5);
+    z-index: 1000;
+    width: 300px;
+    box-shadow: 0 0 100px rgba(255, 59, 48, 0.5);
+    border: 2px solid var(--accent-red);
+    background-color: #000;
+    animation: pulseCrash 1s infinite;
+}
+
+.drink-card.crashing .current-price {
+    font-size: 3rem;
+    color: #fff;
+}
+
+.crash-badge {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background-color: var(--accent-red);
+    color: #fff;
+    padding: 0.5rem 1rem;
+    font-weight: bold;
+    transform: rotate(15deg);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+    animation: bounce 0.5s infinite alternate;
+    z-index: 1001;
+    /* Ensure it's above the card */
+}
+
+@keyframes pulseCrash {
+    0% {
+        box-shadow: 0 0 50px rgba(255, 59, 48, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 0 100px rgba(255, 59, 48, 0.8);
+    }
+
+    100% {
+        box-shadow: 0 0 50px rgba(255, 59, 48, 0.3);
+    }
+}
+
+@keyframes bounce {
+    from {
+        transform: rotate(15deg) scale(1);
+    }
+
+    to {
+        transform: rotate(15deg) scale(1.1);
+    }
+}
+
+/* Trend Icons */
+.trend-icon {
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+    margin-right: 4px;
+}
+
+.trend-icon.up {
+    stroke: var(--accent-green);
+}
+
+.trend-icon.down {
+    stroke: var(--accent-red);
+}
+
+/* Overlay for background dimming when crashing */
+body.has-crash::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 999;
+    pointer-events: none;
+}
