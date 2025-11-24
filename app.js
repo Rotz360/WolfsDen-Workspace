@@ -1,25 +1,25 @@
 // Drink Data
 const drinks = [
-    // Cocktails (8-12)
-    { id: 1, name: "Vodka Redbull", type: "Cocktail", price: 8.00, initialPrice: 8.00, min: 8.00, max: 12.00, volatility: 0.5 },
-    { id: 2, name: "Gin Tonic", type: "Cocktail", price: 8.00, initialPrice: 8.00, min: 8.00, max: 12.00, volatility: 0.4 },
-    { id: 3, name: "Whiskey Sour", type: "Cocktail", price: 8.00, initialPrice: 8.00, min: 8.00, max: 12.00, volatility: 0.4 },
-    { id: 8, name: "Mojito", type: "Cocktail", price: 8.00, initialPrice: 8.00, min: 8.00, max: 12.00, volatility: 0.3 },
-    { id: 9, name: "Old Fashioned", type: "Cocktail", price: 8.00, initialPrice: 8.00, min: 8.00, max: 12.00, volatility: 0.3 },
-    { id: 10, name: "Martini", type: "Cocktail", price: 8.00, initialPrice: 8.00, min: 8.00, max: 12.00, volatility: 0.4 },
-    { id: 11, name: "Long Island", type: "Cocktail", price: 8.00, initialPrice: 8.00, min: 8.00, max: 12.00, volatility: 0.4 },
-    { id: 12, name: "Gin Lemon", type: "Cocktail", price: 8.00, initialPrice: 8.00, min: 8.00, max: 12.00, volatility: 0.4 },
+    // Cocktails (8-12) -> Dynamic: 8-2=6, 8+4=12
+    { id: 1, name: "Vodka Redbull", type: "Cocktail", price: 8.00, initialPrice: 8.00, volatility: 0.5 },
+    { id: 2, name: "Gin Tonic", type: "Cocktail", price: 8.00, initialPrice: 8.00, volatility: 0.4 },
+    { id: 3, name: "Whiskey Sour", type: "Cocktail", price: 8.00, initialPrice: 8.00, volatility: 0.4 },
+    { id: 8, name: "Mojito", type: "Cocktail", price: 8.00, initialPrice: 8.00, volatility: 0.3 },
+    { id: 9, name: "Old Fashioned", type: "Cocktail", price: 8.00, initialPrice: 8.00, volatility: 0.3 },
+    { id: 10, name: "Martini", type: "Cocktail", price: 8.00, initialPrice: 8.00, volatility: 0.4 },
+    { id: 11, name: "Long Island", type: "Cocktail", price: 8.00, initialPrice: 8.00, volatility: 0.4 },
+    { id: 12, name: "Gin Lemon", type: "Cocktail", price: 8.00, initialPrice: 8.00, volatility: 0.4 },
 
-    // Beers (5-8)
-    { id: 4, name: "Heineken", type: "Beer", price: 5.00, initialPrice: 5.00, min: 5.00, max: 8.00, volatility: 0.2 },
-    { id: 5, name: "Corona", type: "Beer", price: 5.00, initialPrice: 5.00, min: 5.00, max: 8.00, volatility: 0.2 },
-    { id: 13, name: "Blonde Beer", type: "Beer", price: 5.00, initialPrice: 5.00, min: 5.00, max: 8.00, volatility: 0.2 },
-    { id: 14, name: "Guinness", type: "Beer", price: 5.00, initialPrice: 5.00, min: 5.00, max: 8.00, volatility: 0.2 },
+    // Beers (5-8) -> Dynamic: 5-2=3, 5+4=9
+    { id: 4, name: "Heineken", type: "Beer", price: 5.00, initialPrice: 5.00, volatility: 0.2 },
+    { id: 5, name: "Corona", type: "Beer", price: 5.00, initialPrice: 5.00, volatility: 0.2 },
+    { id: 13, name: "Blonde Beer", type: "Beer", price: 5.00, initialPrice: 5.00, volatility: 0.2 },
+    { id: 14, name: "Guinness", type: "Beer", price: 5.00, initialPrice: 5.00, volatility: 0.2 },
 
-    // Shots (4-6)
-    { id: 6, name: "Tequila Shot", type: "Shot", price: 4.00, initialPrice: 4.00, min: 4.00, max: 6.00, volatility: 0.6 },
-    { id: 7, name: "Jägerbomb", type: "Shot", price: 4.00, initialPrice: 4.00, min: 4.00, max: 6.00, volatility: 0.5 },
-    { id: 15, name: "Chupito", type: "Shot", price: 4.00, initialPrice: 4.00, min: 4.00, max: 6.00, volatility: 0.6 }
+    // Shots (4-6) -> Dynamic: 4-2=2, 4+4=8
+    { id: 6, name: "Tequila Shot", type: "Shot", price: 4.00, initialPrice: 4.00, volatility: 0.6 },
+    { id: 7, name: "Jägerbomb", type: "Shot", price: 4.00, initialPrice: 4.00, volatility: 0.5 },
+    { id: 15, name: "Chupito", type: "Shot", price: 4.00, initialPrice: 4.00, volatility: 0.6 }
 ];
 
 // App State
@@ -44,8 +44,19 @@ function init() {
     const typeOrder = { "Cocktail": 1, "Beer": 2, "Shot": 3 };
     drinks.sort((a, b) => typeOrder[a.type] - typeOrder[b.type]);
 
-    // Initialize update times for each drink
+    // Initialize update times and ranges for each drink
     drinks.forEach(drink => {
+        // Dynamic Range: Start - 2 to Start + 4
+        drink.min = drink.initialPrice - 2.00;
+        drink.max = drink.initialPrice + 4.00;
+
+        // History for graph (init with start price)
+        drink.history = Array(20).fill(drink.initialPrice);
+
+        // Stuck counter
+        drink.stuckCounter = 0;
+        drink.stuckAt = null; // 'min' or 'max'
+
         scheduleNextUpdate(drink);
     });
 
@@ -104,20 +115,52 @@ function updateDrinkPrice(drink) {
     const units = Math.floor(Math.random() * 15) + 1;
     const amount = units * 0.10;
 
-    const direction = Math.random() > 0.5 ? 1 : -1;
-    const change = direction * amount;
+    let direction = Math.random() > 0.5 ? 1 : -1;
 
+    // Balancing Logic: Force direction if stuck
+    if (drink.stuckCounter >= 3) {
+        if (drink.stuckAt === 'min') direction = 1; // Force Up
+        if (drink.stuckAt === 'max') direction = -1; // Force Down
+        // Reset counter after forcing
+        drink.stuckCounter = 0;
+        drink.stuckAt = null;
+    }
+
+    const change = direction * amount;
     let newPrice = drink.price + change;
 
-    // Keep within bounds
-    if (newPrice < drink.min) newPrice = drink.min;
-    if (newPrice > drink.max) newPrice = drink.max;
+    // Check bounds and update stuck counter
+    if (newPrice <= drink.min) {
+        newPrice = drink.min;
+        if (drink.stuckAt === 'min') {
+            drink.stuckCounter++;
+        } else {
+            drink.stuckAt = 'min';
+            drink.stuckCounter = 1;
+        }
+    } else if (newPrice >= drink.max) {
+        newPrice = drink.max;
+        if (drink.stuckAt === 'max') {
+            drink.stuckCounter++;
+        } else {
+            drink.stuckAt = 'max';
+            drink.stuckCounter = 1;
+        }
+    } else {
+        // Not at limit, reset counter
+        drink.stuckCounter = 0;
+        drink.stuckAt = null;
+    }
 
     // Round to 2 decimals
     newPrice = Math.round(newPrice * 100) / 100;
 
     drink.oldPrice = drink.price;
     drink.price = newPrice;
+
+    // Update History
+    drink.history.push(newPrice);
+    if (drink.history.length > 20) drink.history.shift();
 }
 
 function triggerSingleCrash() {
@@ -128,6 +171,10 @@ function triggerSingleCrash() {
 
     drink.oldPrice = drink.price;
     drink.price = drink.initialPrice * 0.5;
+
+    // Add crash price to history
+    drink.history.push(drink.price);
+    if (drink.history.length > 20) drink.history.shift();
 
     marketStateEl.innerHTML = `CRASH: <span style="color: var(--accent-red)">${drink.name}</span>`;
     marketStateEl.style.color = "var(--accent-red)";
@@ -145,6 +192,11 @@ function endSingleCrash() {
         drink.oldPrice = drink.price;
         // Reset near initial
         drink.price = drink.initialPrice;
+
+        // Add reset price to history
+        drink.history.push(drink.price);
+        if (drink.history.length > 20) drink.history.shift();
+
         scheduleNextUpdate(drink);
     }
 
@@ -178,17 +230,23 @@ function renderGrid() {
         const card = document.createElement('div');
         card.className = `drink-card ${isCrashing ? 'crashing' : ''}`;
 
-        const priceChange = drink.price - (drink.oldPrice || drink.price);
+        const priceChange = drink.price - drink.initialPrice;
         const isUp = priceChange >= 0;
 
         const arrowIcon = isUp
             ? `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="trend-icon up"><polyline points="18 15 12 9 6 15"></polyline></svg>`
             : `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="trend-icon down"><polyline points="6 9 12 15 18 9"></polyline></svg>`;
 
+        // Generate Graph SVG
+        const graphHtml = generateGraphSvg(drink);
+
         card.innerHTML = `
             <div class="drink-info">
                 <div class="drink-name">${drink.name}</div>
                 <div class="drink-type">${drink.type}</div>
+            </div>
+            <div class="graph-area">
+                ${graphHtml}
             </div>
             <div class="price-area">
                 <div class="current-price" style="color: ${isCrashing ? '#fff' : (isUp ? 'var(--accent-green)' : 'var(--accent-red)')}">
@@ -206,12 +264,43 @@ function renderGrid() {
     });
 }
 
+function generateGraphSvg(drink) {
+    const width = 100; // Viewbox width
+    const height = 40; // Viewbox height
+    const padding = 10; // Increased padding to prevent clipping (was 5)
+
+    // Normalize points to viewbox
+    const min = drink.min;
+    const max = drink.max;
+    const range = max - min;
+
+    const points = drink.history.map((price, index) => {
+        const x = (index / (drink.history.length - 1)) * width;
+        // Invert Y because SVG 0 is top. Map price to [height-padding, padding]
+        const normalizedPrice = (price - min) / range;
+        const y = (height - padding) - (normalizedPrice * (height - 2 * padding));
+        return `${x},${y}`;
+    }).join(' ');
+
+    const color = drink.price >= drink.initialPrice ? 'var(--accent-green)' : 'var(--accent-red)';
+
+    return `<svg viewBox="0 0 ${width} ${height}" class="stock-graph" preserveAspectRatio="none">
+        <polyline points="${points}" fill="none" stroke="${color}" stroke-width="2" vector-effect="non-scaling-stroke" />
+    </svg>`;
+}
+
 function renderTicker() {
     const tickerHtml = drinks.map(drink => {
         const isUp = drink.price >= (drink.oldPrice || drink.price);
+        const arrowIcon = isUp
+            ? `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="ticker-icon up"><polyline points="18 15 12 9 6 15"></polyline></svg>`
+            : `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="ticker-icon down"><polyline points="6 9 12 15 18 9"></polyline></svg>`;
+
         return `<span class="ticker-item ${isUp ? 'up' : 'down'}">
-            ${drink.name} <span class="price">€${drink.price.toFixed(2)}</span>
-        </span>`;
+            <span class="ticker-name">${drink.name}</span>
+            ${arrowIcon}
+            <span class="price">€${drink.price.toFixed(2)}</span>
+        </span><span class="ticker-separator">|</span>`;
     }).join('');
 
     const fullHtml = tickerHtml + tickerHtml + tickerHtml;
